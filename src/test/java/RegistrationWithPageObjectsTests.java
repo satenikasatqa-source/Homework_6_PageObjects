@@ -72,7 +72,7 @@ public class RegistrationWithPageObjectsTests {
                 .submitForm()
                 .checkInvalidEmailError();
     }
-    
+
 }
 
 
