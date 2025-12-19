@@ -2,12 +2,14 @@ import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pages.RegistrationPage;
-import pages.RegistrationResultsPage;
+import pages.components.RegistrationResultsComponent;
+
 
 public class RegistrationWithPageObjectsTests {
 
     RegistrationPage registrationPage = new RegistrationPage();
-    RegistrationResultsPage resultsPage = new RegistrationResultsPage();
+    RegistrationResultsComponent resultsComponent = new RegistrationResultsComponent();
+
 
     @BeforeAll
     static void beforeAll() {
@@ -33,7 +35,8 @@ public class RegistrationWithPageObjectsTests {
                 .selectCity("Noida")
                 .submitForm();
 
-        resultsPage
+        resultsComponent
+                .verifyModalOpened()
                 .checkResult("Ivanna Ivanova")
                 .checkResult("tester@gmail.com")
                 .checkResult("Female")
@@ -44,6 +47,7 @@ public class RegistrationWithPageObjectsTests {
                 .checkResult("Yerevan some street")
                 .checkResult("ForDemoQaTests.jpeg")
                 .checkResult("NCR Noida");
+
     }
 
     @Test
@@ -54,10 +58,12 @@ public class RegistrationWithPageObjectsTests {
                 .setGender("Female")
                 .setUserNumber("9876543210")
                 .submitForm();
-        resultsPage
+        resultsComponent
+                .verifyModalOpened()
                 .checkResult("Ivanna Ivanova")
                 .checkResult("Female")
                 .checkResult("9876543210");
+
 
     }
 

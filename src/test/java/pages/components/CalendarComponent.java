@@ -1,16 +1,21 @@
 package pages.components;
 
-import pages.RegistrationPage;
+import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Selenide.$;
 
 public class CalendarComponent {
+
+    private SelenideElement yearPicker = $(".react-datepicker__year-select");
+    private SelenideElement monthPicker = $(".react-datepicker__month-select");
+    private String dayPicker =
+            ".react-datepicker__day--0%s:not(.react-datepicker__day--outside-month)";
+
     public void setDate(String day, String month, String year) {
-        $("#dateOfBirthInput").click();
-        $(".react-datepicker__month-select").selectOption("January");
-        $(".react-datepicker__year-select").selectOption("1980");
-        $(".react-datepicker__day--006:not(.react-datepicker__day--outside-month)").click();
+        yearPicker.selectOption(year);
+        monthPicker.selectOption(month);
 
+        String formattedDay = day.length() == 1 ? "0" + day : day;
+        $(String.format(dayPicker, formattedDay)).click();
     }
-
 }

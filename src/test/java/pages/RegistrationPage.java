@@ -7,6 +7,8 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Condition.attributeMatching;
+import utils.JsSnippets;
+
 public class RegistrationPage {
 
     // элементы страницы
@@ -28,10 +30,11 @@ public class RegistrationPage {
     public RegistrationPage openPage() {
         open("/automation-practice-form");
         $(".practice-form-wrapper").shouldHave(text("Student Registration Form"));
-        executeJavaScript("$('#fixedban').remove()");
-        executeJavaScript("$('footer').remove()");
+        JsSnippets.removeBanners();
         return this;
     }
+
+
 
     public RegistrationPage setFirstName(String value) {
         firstNameInput.setValue(value);
