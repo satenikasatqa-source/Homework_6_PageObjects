@@ -2,30 +2,28 @@ import com.codeborne.selenide.Configuration;
 import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import pages.RegistrationPage;
+import pages.components.RegistrationResultsComponent;
 
-import java.io.File;
-import java.time.Month;
 import java.util.Locale;
 
-import static com.codeborne.selenide.Condition.appear;
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Selectors.byText;
-import static com.codeborne.selenide.Selenide.*;
-
 public class RegistrationWithFakerTests {
+
+    RegistrationPage registrationPage = new RegistrationPage();
+    RegistrationResultsComponent resultsComponent = new RegistrationResultsComponent();
+
+    static Faker faker = new Faker(new Locale("en"));
 
     @BeforeAll
     static void beforeAll() {
         Configuration.browserSize = "1920x1080";
         Configuration.baseUrl = "https://demoqa.com";
         Configuration.timeout = 60000;
+        Configuration.pageLoadStrategy = "eager";
     }
 
     @Test
     void fillInFieldsTest() {
-
-        Faker faker = new Faker(new Locale("en"));
-
         String firstName = faker.name().firstName();
         String lastName = faker.name().lastName();
         String userEmail = faker.internet().emailAddress();
@@ -34,57 +32,42 @@ public class RegistrationWithFakerTests {
         String gender = faker.options().option("Male", "Female", "Other");
         String subject = faker.options().option("Maths", "Physics", "Chemistry");
         String hobby = faker.options().option("Sports", "Reading", "Music");
+
+        String month = faker.options().option(
+                "January", "February", "March", "April", "May",
+                "June", "July", "August", "September", "October",
+                "November", "December"
+        );
+
+        int day = faker.number().numberBetween(1, 28);
+        int year = faker.number().numberBetween(1990, 2010);
+
         String state = "NCR";
         String city = "Delhi";
-        int year = faker.number().numberBetween(1990, 2010);
-        Month month = faker.options().option(Month.values());
-        int day = faker.number().numberBetween(1, 28);
 
-        open("/automation-practice-form");
+        registrationPage.openPage()
+                .removeBanners()
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setUserEmail(userEmail)
+                .setGender(gender)
+                .setUserNumber(phoneNumber)
+                .setDateOfBirth(String.valueOf(day), month, String.valueOf(year))
+                .setSubject(subject)
+                .setHobbies(hobby)
+                .setCurrentAddress(streetAddress)
+                .uploadPicture("ForDemoQaTests.jpeg")
+                .selectState(state)
+                .selectCity(city)
+                .submitForm();
 
-        $(".practice-form-wrapper")
-                .shouldHave(text("Student Registration Form"));
-        executeJavaScript("$('#fixedban').remove()");
-        executeJavaScript("$('footer').remove()");
-
-        $("#firstName").setValue(firstName);
-        $("#lastName").setValue(lastName);
-        $("#userEmail").setValue(userEmail);
-        $("#genterWrapper").$(byText(gender)).click();
-        $("#userNumber").setValue(phoneNumber);
-        $("#dateOfBirthInput").click();
-        $(".react-datepicker__month-select").selectOption(month.getDisplayName(java.time.format.TextStyle.FULL, Locale.ENGLISH));
-        $(".react-datepicker__year-select").selectOption(String.valueOf(year));
-        $(".react-datepicker__day--0" + String.format("%02d", day)
-                + ":not(.react-datepicker__day--outside-month)").click();
-        $("#subjectsInput").setValue(subject).pressEnter();
-        $("#hobbiesWrapper").$(byText(hobby)).click();
-        $("#uploadPicture").uploadFromClasspath("ForDemoQaTests.jpeg");
-        $("#currentAddress").setValue(streetAddress);
-        $("#state").click();
-        $("#stateCity-wrapper").$(byText("NCR")).click();
-        $("#city").click();
-        $("#stateCity-wrapper").$(byText("Delhi")).click();
-        $("#submit").click();
-
-
-        $(".modal-dialog").should(appear);
-        $("#example-modal-sizes-title-lg")
-                .shouldHave(text("Thanks for submitting the form"));
-
-        $(".table-responsive").shouldHave(
-                text(firstName),
-                text(lastName),
-                text(userEmail),
-                text(phoneNumber),
-                text(streetAddress)
-        );
+        resultsComponent
+                .verifyModalOpened()
+                .checkResult(firstName + " " + lastName)
+                .checkResult(userEmail)
+                .checkResult(gender)
+                .checkResult(phoneNumber)
+                .checkResult(streetAddress)
+                .checkResult(state + " " + city);
     }
 }
-
-
-
-
-
-
-

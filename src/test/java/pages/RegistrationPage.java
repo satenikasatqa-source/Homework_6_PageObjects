@@ -108,6 +108,11 @@ public class RegistrationPage {
         userEmailInput.shouldHave(attributeMatching("validationMessage", ".+"));
         return this;
     }
+    public RegistrationPage removeBanners() {
+        executeJavaScript("$('#fixedban').remove()");
+        executeJavaScript("$('footer').remove()");
+        return this;
+    }
 
 }
 
