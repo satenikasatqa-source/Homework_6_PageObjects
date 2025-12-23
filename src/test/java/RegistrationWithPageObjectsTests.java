@@ -13,10 +13,14 @@ public class RegistrationWithPageObjectsTests {
 
     @BeforeAll
     static void beforeAll() {
-        Configuration.browserSize = "1920x1080";   // more common, but 1980x1080 also works
+        Configuration.browserSize = "1920x1080";   
         Configuration.baseUrl = "https://demoqa.com";
         Configuration.timeout = 60000;
+        Configuration.pageLoadStrategy = "eager";
     }
+
+
+
 
     @Test
     void fillInFieldsTest() {
