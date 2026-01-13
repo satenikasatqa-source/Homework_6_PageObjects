@@ -1,18 +1,14 @@
 import com.codeborne.selenide.Configuration;
-import com.github.javafaker.Faker;
+import data.TestData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pages.RegistrationPage;
 import pages.components.RegistrationResultsComponent;
 
-import java.util.Locale;
-
 public class RegistrationWithFakerTests {
 
     RegistrationPage registrationPage = new RegistrationPage();
     RegistrationResultsComponent resultsComponent = new RegistrationResultsComponent();
-
-    static Faker faker = new Faker(new Locale("en"));
 
     @BeforeAll
     static void beforeAll() {
@@ -24,50 +20,31 @@ public class RegistrationWithFakerTests {
 
     @Test
     void fillInFieldsTest() {
-        String firstName = faker.name().firstName();
-        String lastName = faker.name().lastName();
-        String userEmail = faker.internet().emailAddress();
-        String phoneNumber = faker.number().digits(10);
-        String streetAddress = faker.address().streetAddress();
-        String gender = faker.options().option("Male", "Female", "Other");
-        String subject = faker.options().option("Maths", "Physics", "Chemistry");
-        String hobby = faker.options().option("Sports", "Reading", "Music");
-
-        String month = faker.options().option(
-                "January", "February", "March", "April", "May",
-                "June", "July", "August", "September", "October",
-                "November", "December"
-        );
-
-        int day = faker.number().numberBetween(1, 28);
-        int year = faker.number().numberBetween(1990, 2010);
-
-        String state = "NCR";
-        String city = "Delhi";
+        TestData data = new TestData();
 
         registrationPage.openPage()
                 .removeBanners()
-                .setFirstName(firstName)
-                .setLastName(lastName)
-                .setUserEmail(userEmail)
-                .setGender(gender)
-                .setUserNumber(phoneNumber)
-                .setDateOfBirth(String.valueOf(day), month, String.valueOf(year))
-                .setSubject(subject)
-                .setHobbies(hobby)
-                .setCurrentAddress(streetAddress)
+                .setFirstName(data.firstName)
+                .setLastName(data.lastName)
+                .setUserEmail(data.userEmail)
+                .setGender(data.gender)
+                .setUserNumber(data.phoneNumber)
+                .setDateOfBirth(String.valueOf(data.day), data.month, String.valueOf(data.year))
+                .setSubject(data.subject)
+                .setHobbies(data.hobby)
+                .setCurrentAddress(data.streetAddress)
                 .uploadPicture("ForDemoQaTests.jpeg")
-                .selectState(state)
-                .selectCity(city)
+                .selectState(data.state)
+                .selectCity(data.city)
                 .submitForm();
 
         resultsComponent
                 .verifyModalOpened()
-                .checkResult(firstName + " " + lastName)
-                .checkResult(userEmail)
-                .checkResult(gender)
-                .checkResult(phoneNumber)
-                .checkResult(streetAddress)
-                .checkResult(state + " " + city);
+                .checkResult(data.firstName + " " + data.lastName)
+                .checkResult(data.userEmail)
+                .checkResult(data.gender)
+                .checkResult(data.phoneNumber)
+                .checkResult(data.streetAddress)
+                .checkResult(data.state + " " + data.city);
     }
 }
